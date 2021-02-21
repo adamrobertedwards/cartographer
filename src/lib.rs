@@ -143,7 +143,7 @@ impl <'a> BreadthFirstSearch <'a> {
         };
     }
 
-    pub fn calculate_moves(&'a mut self, map: &'a Map, start: &'a str, moves: u32) -> Vec<String> {
+    pub fn calculate_moves(&mut self, map: &'a Map, start: &'a str, moves: u32) -> Vec<String> {
         let mut visited: HashMap<&str, Option<&str>> = HashMap::new();
         let mut costs: HashMap<&str, u32> = HashMap::new();
 
@@ -190,7 +190,7 @@ impl <'a> Dijkstra <'a> {
         }
     }
 
-    pub fn calculate_moves(&'a mut self, map: &'a Map, start: &'a str, moves: u32) -> Vec<String> {
+    pub fn calculate_moves(&mut self, map: &'a Map, start: &'a str, moves: u32) -> Vec<String> {
         let mut visited: HashMap<&str, Option<&str>> = HashMap::new();
         let mut costs: HashMap<&str, u32> = HashMap::new();
 
@@ -236,7 +236,7 @@ impl <'a> Dijkstra <'a> {
         return available;
     }
 
-    pub fn calculate_path (&'a mut self, map: &'a Map, start: &'a str, end: &'a str) -> CostPath {
+    pub fn calculate_path (&mut self, map: &'a Map, start: &'a str, end: &'a str) -> CostPath {
         let mut visited: HashMap<&str, Option<&str>> = HashMap::new();
         let mut costs: HashMap<&str, u32> = HashMap::new();
 

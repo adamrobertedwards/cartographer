@@ -16,17 +16,17 @@ fn main() {
     let mut bfs = BreadthFirstSearch::new();
     let mut dijkstra = Dijkstra::new();
 
-    // let moves_bfs = bfs.calculate_moves(&map, "(1,1)", 2);
-    // println!("moves bfs: {:?}", moves_bfs);
+    let moves_bfs = bfs.calculate_moves(&map, "(1,1)", 2);
+    println!("moves bfs: {:?}", moves_bfs);
 
-    // let solve_bfs = bfs.calculate_path(&map, "(1,1)", "(4,3)");
-    // println!("solve bfs {:?}", solve_bfs);
+    let solve_bfs = bfs.calculate_path(&map, "(1,1)", "(4,3)");
+    println!("solve bfs {:?}", solve_bfs);
 
-    // let moves_dijkstra = dijkstra.calculate_moves(&map, "(1,1)", 3);
-    // println!("moves Dijkstra: {:?}", moves_dijkstra);
+    let moves_dijkstra = dijkstra.calculate_moves(&map, "(1,1)", 3);
+    println!("moves Dijkstra: {:?}", moves_dijkstra);
 
-    // let solve_dijkstra = dijkstra.calculate_path(&map, "(1,1)", "(4,3)");
-    // println!("solve Dijkstra: {:?}", solve_dijkstra);
+    let solve_dijkstra = dijkstra.calculate_path(&map, "(1,1)", "(4,3)");
+    println!("solve Dijkstra: {:?}", solve_dijkstra);
     
     // println!("{:?}", solve_bfs);
 }
