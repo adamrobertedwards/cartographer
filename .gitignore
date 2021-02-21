@@ -1,0 +1,3 @@
+Cargo.lock
+# Ignore build folders in all sub folders
+**/target
