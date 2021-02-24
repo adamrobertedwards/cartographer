@@ -1,20 +1,25 @@
-use cartographer::{Map, Dijkstra, BreadthFirstSearch};
-
+use cartographer::{
+    map::Map,
+    bfs::BreadthFirstSearch,
+    dijkstra::Dijkstra,
+    astar::AStar,
+    Pathing
+};
 
 fn main() {
-    let grid: Vec<Vec<Option<(&str, u32)>>> = vec!(
-        vec!(Some(("(1,1)", 1)), Some(("(1,2)", 1)), Some(("(1,3)", 2)), None), 
-        vec!(Some(("(2,1)", 5)), None, Some(("(2,3)", 2)), Some(("(2,4)", 1))), 
-        vec!(Some(("(3,1)", 5)), Some(("(3,2)", 1)), None, Some(("(3,4)", 2))),
-        vec!(None, Some(("(4,2)", 1)), Some(("(4,3)", 1)), Some(("(4,4)", 1))),
+    let grid = vec!(
+        vec!(Some(("(1,1)", 1, (1,1))), Some(("(1,2)", 1, (1,2))), Some(("(1,3)", 2, (1,3))), None), 
+        vec!(Some(("(2,1)", 5, (2,1))), None, Some(("(2,3)", 2, (2,3))), Some(("(2,4)", 1, (2,4)))), 
+        vec!(Some(("(3,1)", 5, (3,1))), Some(("(3,2)", 1, (3,2))), None, Some(("(3,4)", 2, (3,4)))),
+        vec!(None, Some(("(4,2)", 1, (4,2))), Some(("(4,3)", 1, (4,3))), Some(("(4,4)", 1, (4,4)))),
     );
     let mut map = Map::new();
 
     setup_grid(&mut map, &grid);
-    draw_grid(&grid);
-    
+
     let mut bfs = BreadthFirstSearch::new();
     let mut dijkstra = Dijkstra::new();
+    let mut astar = AStar::new();
 
     let moves_bfs = bfs.calculate_moves(&map, "(1,1)", 2);
     println!("moves bfs: {:?}", moves_bfs);
@@ -27,11 +32,13 @@ fn main() {
 
     let solve_dijkstra = dijkstra.calculate_path(&map, "(1,1)", "(4,3)");
     println!("solve Dijkstra: {:?}", solve_dijkstra);
-    
-    // println!("{:?}", solve_bfs);
+
+    let solve_astar = astar.calculate_path(&map, "(1,1)", "(4,3)");
+    println!("solve AStar: {:?}", solve_astar);
+
 }
 
-fn setup_grid(map: &mut Map, grid: &Vec<Vec<Option<(&str, u32)>>>) {
+fn setup_grid(map: &mut Map, grid: &Vec<Vec<Option<(&'static str, u32, (i32, i32))>>>) {
     let directions: [(i32, i32); 4] = [(-1, 0), (0, -1), (1, 0), (0, 1)];
     let mut row_index: i32 = 0;
 
@@ -41,7 +48,7 @@ fn setup_grid(map: &mut Map, grid: &Vec<Vec<Option<(&str, u32)>>>) {
         for col in row {
             if let Some(node) = col {
                 let pos = (&col_index, &row_index);
-                map.add_node(node.0);
+                map.add_node(node.0, node.2);
 
                 for dir in &directions {
                     let neighbour_pos = (pos.1 + dir.1, pos.0 + dir.0);
@@ -67,7 +74,7 @@ fn setup_grid(map: &mut Map, grid: &Vec<Vec<Option<(&str, u32)>>>) {
     }
 }
 
-fn draw_grid(grid: &Vec<Vec<Option<(&str, u32)>>>) {
+fn _draw_grid(grid: &Vec<Vec<Option<(&'static str, u32, (i32, i32))>>>) {
     for row in grid {
         let mut row_items = "".to_string();
 
