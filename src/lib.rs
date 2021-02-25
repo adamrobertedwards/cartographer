@@ -3,15 +3,19 @@ pub mod bfs;
 pub mod dijkstra;
 pub mod astar;
 
-use std::{collections::{HashMap}, vec};
+use std::{collections::{HashMap, BinaryHeap}, vec};
 use std::cmp::{Ordering, Reverse};
 use map::Map;
 
 #[derive(Debug)]
 pub struct CostPath {
     path: Vec<String>,
-    cost: u32,
+    cost: u32
 }
+
+type CostMap <'a> = HashMap<&'a str, u32>;
+type Queue <'a> = BinaryHeap<QueueItem<'a>>;
+type PriorityQueue <'a> = BinaryHeap<PriorityQueueItem<'a>>;
 
 /// QueueItem
 /// 
@@ -61,7 +65,86 @@ pub trait Pathing <'a> {
     }
 
     fn calculate_path (&mut self, map: &'a Map, start: &'a str, end: &'a str) -> CostPath;
-    fn calculate_moves(&mut self, map: &'a Map, start: &'a str, moves: u32) -> Vec<String>;
+}
+
+pub trait UniformMoves <'a> {
+    fn calculate_moves(&mut self, map: &'a Map, start: &'a str, moves: u32) -> Vec<String> {
+        let mut queue: Queue = BinaryHeap::new();
+        let mut visited = HashMap::new();
+        let mut costs: CostMap = HashMap::new();
+
+        visited.insert(start, None);
+        costs.insert(start, 0);
+        queue.push(QueueItem(start));
+
+        while let Some(item) = queue.pop() {
+            if let Some(current) = map.nodes.get(item.0) {
+                for neighbour in &current.neighbours {
+                    let new_cost = costs.get(item.0).unwrap() + 1;
+                    let cost_now = costs.get(neighbour.0 as &str); 
+
+                    if cost_now.is_none() && &new_cost <= &moves {
+                        costs.insert(neighbour.0, new_cost);
+                        visited.insert(neighbour.0, Some(item.0));
+                        queue.push(QueueItem(&*neighbour.0));
+                    }
+                }
+            }
+        }
+
+        let available: Vec<String> = visited
+            .keys()   
+            .map(|k| k.to_string())
+            .collect();
+
+        return available;
+    }
+}
+
+pub trait WeightedMoves <'a> {
+    fn calculate_moves(&mut self, map: &'a Map, start: &'a str, moves: u32) -> Vec<String> {
+        let mut queue: PriorityQueue = BinaryHeap::new();
+        let mut visited = HashMap::new();
+        let mut costs: CostMap = HashMap::new();
+
+        visited.insert(start, None);
+        costs.insert(start, 0);
+        queue.push(
+            PriorityQueueItem {
+                id: start,
+                priority: Reverse(0),
+            }
+        );
+
+        while let Some(item) = queue.pop() {
+            if let Some(current) = map.nodes.get(item.id) {
+                for next in &current.neighbours {
+                    let new_cost = costs.get(item.id).unwrap() + next.1;
+                    let cost_now = costs.get(next.0 as &str); 
+
+                    if (cost_now.is_none() || &new_cost < cost_now.unwrap()) && &new_cost <= &moves {
+                        costs.insert(next.0, new_cost);
+
+                        queue.push(
+                        PriorityQueueItem {
+                                id: next.0,
+                                priority: Reverse(new_cost),
+                            }
+                        );
+
+                        visited.insert(next.0, Some(item.id));
+                    }
+                }
+            }
+        }
+
+        let available: Vec<String> = visited
+            .keys()   
+            .map(|k| k.to_string())
+            .collect();
+
+        return available;
+    }
 }
 
 #[cfg(test)]

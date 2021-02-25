@@ -1,9 +1,13 @@
+use std::time::{Instant, Duration};
+
 use cartographer::{
     map::Map,
     bfs::BreadthFirstSearch,
     dijkstra::Dijkstra,
     astar::AStar,
-    Pathing
+    Pathing,
+    WeightedMoves,
+    UniformMoves
 };
 
 fn main() {
@@ -17,6 +21,9 @@ fn main() {
 
     setup_grid(&mut map, &grid);
 
+    let duration = |duration: Duration| (
+        duration.as_secs() as f64 + duration.subsec_nanos() as f64 * 1e-9
+    );
     let mut bfs = BreadthFirstSearch::new();
     let mut dijkstra = Dijkstra::new();
     let mut astar = AStar::new();
@@ -24,18 +31,22 @@ fn main() {
     let moves_bfs = bfs.calculate_moves(&map, "(1,1)", 2);
     println!("moves bfs: {:?}", moves_bfs);
 
+    let mut timer = Instant::now();
     let solve_bfs = bfs.calculate_path(&map, "(1,1)", "(4,3)");
-    println!("solve bfs {:?}", solve_bfs);
+    println!("solve bfs {:?} in {:?}s", solve_bfs, duration(timer.elapsed()));
 
     let moves_dijkstra = dijkstra.calculate_moves(&map, "(1,1)", 3);
     println!("moves Dijkstra: {:?}", moves_dijkstra);
 
+    timer = Instant::now();
+
     let solve_dijkstra = dijkstra.calculate_path(&map, "(1,1)", "(4,3)");
-    println!("solve Dijkstra: {:?}", solve_dijkstra);
+    println!("solve Dijkstra: {:?} in {:?}s", solve_dijkstra, duration(timer.elapsed()));
+
+    timer = Instant::now();
 
     let solve_astar = astar.calculate_path(&map, "(1,1)", "(4,3)");
-    println!("solve AStar: {:?}", solve_astar);
-
+    println!("solve A*: {:?} in {:?}s", solve_astar, duration(timer.elapsed()));
 }
 
 fn setup_grid(map: &mut Map, grid: &Vec<Vec<Option<(&'static str, u32, (i32, i32))>>>) {
