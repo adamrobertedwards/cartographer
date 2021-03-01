@@ -2,6 +2,7 @@ pub mod map;
 pub mod bfs;
 pub mod dijkstra;
 pub mod astar;
+pub mod distances;
 
 use std::{collections::{HashMap, BinaryHeap}, vec};
 use std::cmp::{Ordering, Reverse};
