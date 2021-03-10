@@ -1,13 +1,17 @@
 use std::time::{Instant, Duration};
 
 use cartographer::{
+    // Could these be imported as part of the libray, without mod name?
     map::Map,
     bfs::BreadthFirstSearch,
     dijkstra::Dijkstra,
     astar::AStar,
+    distances::Distances,
+
+    // Why do I need to import these?
     Pathing,
     WeightedMoves,
-    UniformMoves
+    UniformMoves,
 };
 
 fn main() {
@@ -27,6 +31,8 @@ fn main() {
     let mut bfs = BreadthFirstSearch::new();
     let mut dijkstra = Dijkstra::new();
     let mut astar = AStar::new();
+
+    astar.set_heuristic(Distances::Manhattan);
 
     let moves_bfs = bfs.calculate_moves(&map, "(1,1)", 2);
     println!("moves bfs: {:?}", moves_bfs);

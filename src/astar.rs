@@ -9,7 +9,7 @@ use super::{{PriorityQueue, PriorityQueueItem, Pathing, WeightedMoves, CostMap, 
 pub struct AStar <'a> {
     pub queue: PriorityQueue<'a>,
     pub visited: HashMap<&'a str, Option<&'a str>>,
-    movement: Distances,
+    heuristic: Distances,
 }
 
 impl <'a> AStar <'a> {
@@ -17,12 +17,16 @@ impl <'a> AStar <'a> {
         AStar {
             queue: BinaryHeap::new(),
             visited: HashMap::new(),
-            movement: Distances::Manhattan,
+            heuristic: Distances::Euclidean,
         }
+    }
+    
+    pub fn set_heuristic(&mut self, heuristic: Distances) {
+        self.heuristic = heuristic;
     }
 
     pub fn heuristic_cost(&self, start: &Position, goal: &Position) -> u32 {
-        match self.movement {
+        match self.heuristic {
             Distances::Manhattan => Manhattan::calculate(start, goal),
             Distances::Chebyshev => Chebyshev::calculate(start, goal),
             Distances::Euclidean => Euclidean::calculate(start, goal),
