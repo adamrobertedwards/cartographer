@@ -48,15 +48,8 @@ impl <'a> Pathing <'a> for BreadthFirstSearch <'a> {
 
         return CostPath {
             path,
-            cost,
+            cost
         };
     }
 }
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
