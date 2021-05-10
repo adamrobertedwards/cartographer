@@ -10,8 +10,8 @@ use map::Map;
 
 #[derive(Debug)]
 pub struct CostPath {
-    path: Vec<String>,
-    cost: u32
+    pub path: Vec<String>,
+    pub cost: u32
 }
 
 type CostMap <'a> = HashMap<&'a str, u32>;

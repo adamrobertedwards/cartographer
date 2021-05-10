@@ -35,9 +35,11 @@ impl <'a> Pathing <'a> for BreadthFirstSearch <'a> {
 
             if let Some(current) = map.nodes.get(item.0) {
                 for neighbour in &current.neighbours {
-                    if !self.visited.contains_key(&neighbour.0[..]) {
-                        self.visited.insert(neighbour.0, Some(item.0));
-                        self.queue.push(QueueItem (neighbour.0));
+                    if let Some(neighbour_node) = map.nodes.get(neighbour.0) {
+                        if !self.visited.contains_key(&neighbour.0[..]) {
+                            self.visited.insert(neighbour.0, Some(item.0));
+                            self.queue.push(QueueItem (neighbour.0));
+                        }
                     }
                 }
             }

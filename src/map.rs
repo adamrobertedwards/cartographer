@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct Position {
-    pub x: i32,
-    pub y: i32,
+    pub x: f32,
+    pub y: f32,
 }
 
 #[derive(Debug)]
@@ -13,7 +13,7 @@ pub struct Node {
 }
 
 impl Node {
-    pub fn new(position: (i32, i32)) -> Node {
+    pub fn new(position: (f32, f32)) -> Node {
         Node {
             neighbours: HashMap::new(),
             position: Position {
@@ -39,7 +39,7 @@ impl Map {
     }
 
     /// Add new node to the Map
-    pub fn add_node(&mut self, id: &str, position: (i32, i32)) {
+    pub fn add_node(&mut self, id: &str, position: (f32, f32)) {
         self.nodes
             .entry(id.to_string())
             .or_insert(Node::new(
@@ -47,13 +47,27 @@ impl Map {
             ));
     }
 
-    pub fn remove_node(&mut self, id: &str) -> Option<Node> {
+    /// Remove node from the Map
+    pub fn remove_node(&mut self, id: &str) -> Result<(), &str> {
+        // Iterate through map nodes
+        // Find where current node neighbours contain this node
+        // Remove reference to this node from the current node neighbours
+        for (_, node) in self.nodes.iter_mut() {
+            if let Some(_) = node.neighbours.get(id) {
+                node.neighbours.remove(id);
+            }
+        }
+
         self.nodes
-            .remove(&id.to_string())
+            .remove(&id.to_string());
+        
+        Ok(())
     }
 
     pub fn connect_nodes(&mut self, from: &str, to: &str, weight: u32) -> Result<(), &str> {
-        if let Some(node_from) = self.nodes.get_mut(from) {
+        let destination_exists = self.nodes.contains_key(to);
+
+        if let (Some(node_from), true) = (self.nodes.get_mut(from), destination_exists)  {
             node_from.neighbours
                 .entry(to.to_string())
                 .or_insert(weight);

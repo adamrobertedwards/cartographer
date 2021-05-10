@@ -15,7 +15,7 @@ impl Euclidean {
     pub fn calculate(start: &Position, goal: &Position) -> u32 {
         let dx = (start.x - goal.x).abs();
         let dy = (start.y - goal.y).abs();
-        ((dx.pow(2) + dy.pow(2)) as f32).sqrt() as u32
+        ((dx.powf(2.0) + dy.powf(2.0)) as f32).sqrt() as u32
     }
 }
 
@@ -34,6 +34,6 @@ impl Manhattan {
 pub struct Chebyshev {}
 impl Chebyshev {
     pub fn calculate(start: &Position, goal: &Position) -> u32 {
-        max((start.x - goal.x).abs(), (start.y - goal.y).abs()) as u32
+        max((start.x - goal.x).abs() as u32, (start.y - goal.y).abs() as u32) as u32
     }
 }

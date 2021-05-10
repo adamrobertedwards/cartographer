@@ -46,20 +46,22 @@ impl <'a> Pathing <'a> for Dijkstra <'a> {
 
             if let Some(current) = map.nodes.get(item.id) {
                 for neighbour in &current.neighbours {
-                    let new_cost = costs.get(item.id).unwrap() + neighbour.1;
-                    let cost_now = costs.get(neighbour.0 as &str); 
+                    if let Some(neighbour_node) = map.nodes.get(neighbour.0) {
+                        let new_cost = costs.get(item.id).unwrap() + neighbour.1;
+                        let cost_now = costs.get(neighbour.0 as &str); 
 
-                    if cost_now.is_none() || &new_cost < cost_now.unwrap() {
-                        costs.insert(neighbour.0, new_cost);
+                        if cost_now.is_none() || &new_cost < cost_now.unwrap() {
+                            costs.insert(neighbour.0, new_cost);
 
-                        self.queue.push(
-                        PriorityQueueItem {
-                                id: neighbour.0,
-                                priority: Reverse(new_cost),
-                            }
-                        );
+                            self.queue.push(
+                                PriorityQueueItem {
+                                    id: neighbour.0,
+                                    priority: Reverse(new_cost),
+                                }
+                            );
 
-                        self.visited.insert(neighbour.0, Some(item.id));
+                            self.visited.insert(neighbour.0, Some(item.id));
+                        }
                     }
                 }
             }

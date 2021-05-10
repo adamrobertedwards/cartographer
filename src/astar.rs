@@ -61,30 +61,31 @@ impl <'a> Pathing <'a> for AStar <'a> {
 
             if let Some(current) = map.nodes.get(item.id) {
                 for next in &current.neighbours {
-                    let next_node = map.nodes.get(next.0).unwrap();
-                    let new_cost = costs.get(item.id).unwrap() + next.1;
-                    let cost_now = costs.get(next.0 as &str); 
+                    if let Some(next_node) = map.nodes.get(next.0) {
+                        let new_cost = costs.get(item.id).unwrap() + next.1;
+                        let cost_now = costs.get(next.0 as &str); 
 
-                    if cost_now.is_none() || &new_cost < cost_now.unwrap() {
-                        costs.insert(next.0, new_cost);
+                        if cost_now.is_none() || &new_cost < cost_now.unwrap() {
+                            costs.insert(next.0, new_cost);
 
-                        let priority = new_cost + AStar::heuristic_cost(&self, &next_node.position, &destination_node.position);
+                            let priority = new_cost + AStar::heuristic_cost(&self, &next_node.position, &destination_node.position);
 
-                        self.queue.push(
-                        PriorityQueueItem {
-                                id: next.0,
-                                priority: Reverse(priority),
-                            }
-                        );
+                            self.queue.push(
+                            PriorityQueueItem {
+                                    id: next.0,
+                                    priority: Reverse(priority),
+                                }
+                            );
 
-                        self.visited.insert(next.0, Some(item.id));
+                            self.visited.insert(next.0, Some(item.id));
+                        }
                     }
                 }
             }
         }
 
         let path = self.reconstruct_path(&self.visited, end);
-        let cost = *costs.get(&end).unwrap();
+        let cost = *costs.get(&end).unwrap_or(&0);
 
         return CostPath {
             path,
